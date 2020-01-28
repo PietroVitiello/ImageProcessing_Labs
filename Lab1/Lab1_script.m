@@ -1,5 +1,5 @@
 %% Part 1
-[x, npx] = imRead('H:\Year3\ImageProcessing\Lab1\ImageDataFiles\Head.128');
+[x, npx] = imRead('H:\Year3\ImageProcessing\ImageProcessing_Labs\Lab1\ImageDataFiles\Head.128');
 
 gray_map = gray(110);  %the number inside gray() is the number
                        %of discrete colors of gray
@@ -27,13 +27,13 @@ end
 
 %% Part 5
 clear; close all;
-[x, map] = imread('H:\Year3\ImageProcessing\Lab1\ImageDataFiles\trees.tif');
+[x, map] = imread('H:\Year3\ImageProcessing\ImageProcessing_Labs\Lab1\ImageDataFiles\trees.tif');
 imShow(x, map)
 imShow(x, map(1:128, :))
 
 %% Part 6
 clear; close all;
-[x, map] = imread('H:\Year3\ImageProcessing\Lab1\ImageDataFiles\lily.tif');
+[x, map] = imread('H:\Year3\ImageProcessing\ImageProcessing_Labs\Lab1\ImageDataFiles\lily.tif');
 imShow(x, map)
 column_ramp = (0:1/255:1)';
 redmap = [column_ramp, zeros(256,1), zeros(256,1)];
@@ -43,34 +43,65 @@ graymap = [column_ramp, column_ramp, column_ramp];
 
 maps_array = {redmap, greenmap, bluemap, graymap};
 
-% for i = 1:size(maps_array, 2)
-%     imShow(x(:, :, 1), maps_array{1, i})
-% end
-
 R=double(x(:,:,1)); G=double(x(:,:,2)); B=double(x(:,:,3));
 scaling = R + G + B;
 red_trichrom = R./scaling;
 green_trichrom = G./scaling;
 blue_trichrom = B./scaling;
 
-% x(:,:,1) = red_trichrom;
-% x(:,:,2) = green_trichrom;
-% x(:,:,3) = blue_trichrom;
-
 trichrom_array = {red_trichrom, green_trichrom, blue_trichrom};
 
-%image(x);
-%imagesc(x)
-% colormap(gray(64)); imagesc(red_trichrom);
+red_max = max(max(red_trichrom));
+red_min = min(min(red_trichrom));
+red_range = red_max - red_min;
+red_steps = red_range/255;
+norm_term = fix(red_min/red_steps)-1;
 
-for i = 1:size(trichrom_array, 2)
-    figure(i); colormap(gray(110)); imagesc(trichrom_array{1, i})
+red_indices = fix(red_trichrom/red_steps)-norm_term;
+
+for i = 1:1%size(trichrom_array, 2)
+    figure(5); colormap(gray(256)); image(red_indices)
+    %figure(i); colormap(gray(110)); imagesc(trichrom_array{1, i})
 end
 
-% for i = 1:3%size(trichrom_array, 2)
-%     imShow(x(:, :, i), trichrom_array{1, i})
-% end
+%% Part 7
+clear; close all;
+info = dicominfo('US-PAL-8-10x-echo.dcm');
+[X, map] = dicomread('US-PAL-8-10x-echo.dcm');
+% figure(1)
+% montage(X, map);
+% colorbar;  %The color map represents the one seen next to one of the pictures read one row at a
+           %time that is why you have trhe same pattern repeating. Then
+           %there are colors added later, placed between the colors and the
+           %grayscale
 
+x1 = X(:, :, 1, 1);
+x9 = X(:, :, 1, 9);
+
+% figure(2)
+% image(X(:, :, 1, 1));
+% colormap(map);
+% colorbar;
+
+M = immovie(X, map);
+movie(M, 20, 10); %(file to display, number of times, fps)
+
+%% Part 8
+for i = 1:10
+    B(:, :, 1, i) = X(:, :, 1, i) <= 100;
+end
+
+B = B + 1;
+binary_map = [0 0 0; 1 1 1];
+
+% figure(1)
+% b3 = B(:, :, 1, 3);
+% image(b3);
+% colormap(binary_map);
+% colorbar;
+
+MB = immovie(B, binary_map);
+movie(MB, 20, 10);
 
 
 
