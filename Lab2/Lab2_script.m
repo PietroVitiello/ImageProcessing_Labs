@@ -82,21 +82,17 @@ end
 %% Task 3
 regions = [areas centers boxes];
 imagestack = getRegionPatch(X, regions, index);
-
-figure()
-imshow(X)
-figure()
-imshow(imagestack(:,:,:,1))
+size(imagestack)
 
 %% Plot all the stack
-% [m,n,o,p] = size(imagestack);
-% Plotcols = 10; % This is kind of set arbitrarily
-% Plotrows = ceil(p/Plotcols); % Relative to # of peas
-% for i = 1:p % ‘o’, not zero
-%     subplot(Plotrows,Plotcols,i);
-%     imagesc(imagestack(:,:,:,i));
-%     axis off;
-% end
+[m,n,o,p] = size(imagestack);
+Plotcols = 10; % This is kind of set arbitrarily
+Plotrows = ceil(p/Plotcols); % Relative to # of peas
+for i = 1:p % ‘o’, not zero
+    subplot(Plotrows,Plotcols,i);
+    imagesc(imagestack(:,:,:,i));
+    axis off;
+end
 
 
 
